@@ -22,17 +22,17 @@ export default function Hero() {
   const sectionRef = useRef(null);
   const canvasRef = useRef(null);
 
-  // Mouse parallax for content + subtle scene shift
+  // Mouse parallax for content + subtle scene shift (tuned)
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
   const mxSpring = useSpring(mx, { stiffness: 120, damping: 20, mass: 0.4 });
   const mySpring = useSpring(my, { stiffness: 120, damping: 20, mass: 0.4 });
-  const rotateX = useTransform(mySpring, [-0.5, 0.5], [6, -6]);
-  const rotateY = useTransform(mxSpring, [-0.5, 0.5], [-6, 6]);
-  const translateX = useTransform(mxSpring, [-0.5, 0.5], [-12, 12]);
-  const translateY = useTransform(mySpring, [-0.5, 0.5], [-10, 10]);
-  const subtleX = useTransform(mxSpring, [-0.5, 0.5], [-6, 6]);
-  const subtleY = useTransform(mySpring, [-0.5, 0.5], [-4, 4]);
+  const rotateX = useTransform(mySpring, [-0.5, 0.5], [4, -4]);
+  const rotateY = useTransform(mxSpring, [-0.5, 0.5], [-4, 4]);
+  const translateX = useTransform(mxSpring, [-0.5, 0.5], [-10, 10]);
+  const translateY = useTransform(mySpring, [-0.5, 0.5], [-8, 8]);
+  const subtleX = useTransform(mxSpring, [-0.5, 0.5], [-10, 10]);
+  const subtleY = useTransform(mySpring, [-0.5, 0.5], [-6, 6]);
 
   const handleMouseMove = useCallback(
     (e) => {
@@ -183,8 +183,8 @@ export default function Hero() {
 
     const onPointerMove = (e) => {
       const rect = canvas.getBoundingClientRect();
-      mouse.x = (e.clientX - rect.left);
-      mouse.y = (e.clientY - rect.top);
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
       mouse.active = true;
     };
     const onPointerLeave = () => (mouse.active = false);
@@ -219,7 +219,7 @@ export default function Hero() {
         className="absolute inset-0"
       >
         <Spline
-          scene="https://prod.spline.design/rvFZ5oikmZSIbmGQ/scene.splinecode"
+          scene="https://prod.spline.design/QrI46EbSvyxcmozb/scene.splinecode"
           style={{ width: "100%", height: "100%" }}
         />
       </motion.div>
@@ -324,35 +324,44 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        {/* Circular video spotlight (non-blocking) */}
+        {/* Circular video spotlight with pulse + responsive placement */}
         <motion.div
           aria-hidden
-          className="absolute pointer-events-none right-5 md:right-14 top-24 md:top-28"
+          className="absolute pointer-events-none left-1/2 -translate-x-1/2 bottom-8 md:bottom-auto md:left-auto md:translate-x-0 md:right-8 md:top-24"
           initial={{ opacity: 0, scale: 0.9, y: -10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.8, ease }}
           style={prefersReducedMotion ? undefined : { x: subtleX, y: subtleY }}
         >
           <motion.div
-            className="relative rounded-full shadow-2xl"
-            style={{ width: '11rem', height: '11rem' }}
-            animate={prefersReducedMotion ? undefined : { y: [0, -10, 0] }}
-            transition={prefersReducedMotion ? undefined : { duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            className="relative rounded-full shadow-2xl w-40 h-40 md:w-56 md:h-56"
+            animate={prefersReducedMotion ? undefined : { y: [0, -14, 0], rotate: [0, -1.2, 0] }}
+            transition={prefersReducedMotion ? undefined : { duration: 7, repeat: Infinity, ease: "easeInOut" }}
           >
+            {/* Soft shadow pulse (beat) */}
+            {!prefersReducedMotion && (
+              <motion.div
+                className="absolute -z-[1] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
+                style={{ width: "130%", height: "130%", background: "radial-gradient(50% 50% at 50% 50%, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.15) 35%, transparent 70%)", filter: "blur(12px)" }}
+                animate={{ scale: [1, 1.06, 1], opacity: [0.55, 0.8, 0.55] }}
+                transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
+              />
+            )}
+
             {/* Animated ring */}
             <div
               className="absolute inset-0 rounded-full"
               style={{
-                background: "conic-gradient(from 0deg, #60a5fa, #a78bfa, #f472b6, #60a5fa)",
-                animation: "spin 10s linear infinite",
+                background: "conic-gradient(from 0deg, #ef4444, #f59e0b, #ef4444)",
+                animation: "spin 12s linear infinite",
                 WebkitMask: "radial-gradient(circle, black calc(50% - 4px), transparent calc(50% - 3px))",
                 mask: "radial-gradient(circle, black calc(50% - 4px), transparent calc(50% - 3px))",
                 filter: "blur(0.3px)",
               }}
             />
             {/* Glow */}
-            <div className="absolute inset-0 rounded-full blur-xl opacity-50" style={{
-              background: "radial-gradient(50% 50% at 50% 50%, rgba(96,165,250,0.35) 0%, rgba(167,139,250,0.25) 40%, rgba(244,114,182,0.2) 70%, transparent 80%)"
+            <div className="absolute inset-0 rounded-full blur-xl opacity-60" style={{
+              background: "radial-gradient(50% 50% at 50% 50%, rgba(239,68,68,0.35) 0%, rgba(245,158,11,0.25) 40%, rgba(244,114,182,0.2) 70%, transparent 80%)"
             }} />
 
             {/* Video */}
@@ -372,13 +381,13 @@ export default function Hero() {
               <>
                 <motion.span
                   className="absolute left-1/2 top-1/2 -ml-1 -mt-1 h-2 w-2 rounded-full"
-                  style={{ background: "radial-gradient(circle, #fff, rgba(255,255,255,0))", boxShadow: "0 0 16px 4px rgba(255,255,255,0.7)" }}
+                  style={{ background: "radial-gradient(circle, #fff, rgba(255,255,255,0))", boxShadow: "0 0 16px 4px rgba(255,255,255,0.7)", transformOrigin: "-6rem 0" }}
                   animate={{ rotate: 360 }}
                   transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
                 />
                 <motion.span
                   className="absolute left-1/2 top-1/2 -ml-[2px] -mt-[2px] h-1 w-1 rounded-full"
-                  style={{ background: "radial-gradient(circle, #93c5fd, rgba(147,197,253,0))", boxShadow: "0 0 12px 3px rgba(147,197,253,0.8)", transformOrigin: "-6rem 0" }}
+                  style={{ background: "radial-gradient(circle, #fca5a5, rgba(252,165,165,0))", boxShadow: "0 0 12px 3px rgba(252,165,165,0.8)", transformOrigin: "-8rem 0" }}
                   animate={{ rotate: -360 }}
                   transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
                 />
