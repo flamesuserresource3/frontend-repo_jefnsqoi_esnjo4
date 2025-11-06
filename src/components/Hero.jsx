@@ -323,6 +323,69 @@ export default function Hero() {
             <span className="text-sm text-gray-800 font-medium">Breathe in • 4</span>
           </motion.div>
         </div>
+
+        {/* Circular video spotlight (non-blocking) */}
+        <motion.div
+          aria-hidden
+          className="absolute pointer-events-none right-5 md:right-14 top-24 md:top-28"
+          initial={{ opacity: 0, scale: 0.9, y: -10 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.8, ease }}
+          style={prefersReducedMotion ? undefined : { x: subtleX, y: subtleY }}
+        >
+          <motion.div
+            className="relative rounded-full shadow-2xl"
+            style={{ width: '11rem', height: '11rem' }}
+            animate={prefersReducedMotion ? undefined : { y: [0, -10, 0] }}
+            transition={prefersReducedMotion ? undefined : { duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          >
+            {/* Animated ring */}
+            <div
+              className="absolute inset-0 rounded-full"
+              style={{
+                background: "conic-gradient(from 0deg, #60a5fa, #a78bfa, #f472b6, #60a5fa)",
+                animation: "spin 10s linear infinite",
+                WebkitMask: "radial-gradient(circle, black calc(50% - 4px), transparent calc(50% - 3px))",
+                mask: "radial-gradient(circle, black calc(50% - 4px), transparent calc(50% - 3px))",
+                filter: "blur(0.3px)",
+              }}
+            />
+            {/* Glow */}
+            <div className="absolute inset-0 rounded-full blur-xl opacity-50" style={{
+              background: "radial-gradient(50% 50% at 50% 50%, rgba(96,165,250,0.35) 0%, rgba(167,139,250,0.25) 40%, rgba(244,114,182,0.2) 70%, transparent 80%)"
+            }} />
+
+            {/* Video */}
+            <div className="absolute inset-[6px] rounded-full overflow-hidden border border-white/50 shadow-lg">
+              <video
+                src="https://res.cloudinary.com/dbbqbctgr/video/upload/v1760097408/BeingAlive/runcomfy-20f27764-b7f3-Women-looking-at-cam-1760094414081_gb9wfw.mp4"
+                className="h-full w-full object-cover"
+                autoPlay
+                loop
+                muted
+                playsInline
+              />
+            </div>
+
+            {/* Orbiting sparkles */}
+            {!prefersReducedMotion && (
+              <>
+                <motion.span
+                  className="absolute left-1/2 top-1/2 -ml-1 -mt-1 h-2 w-2 rounded-full"
+                  style={{ background: "radial-gradient(circle, #fff, rgba(255,255,255,0))", boxShadow: "0 0 16px 4px rgba(255,255,255,0.7)" }}
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 14, repeat: Infinity, ease: "linear" }}
+                />
+                <motion.span
+                  className="absolute left-1/2 top-1/2 -ml-[2px] -mt-[2px] h-1 w-1 rounded-full"
+                  style={{ background: "radial-gradient(circle, #93c5fd, rgba(147,197,253,0))", boxShadow: "0 0 12px 3px rgba(147,197,253,0.8)", transformOrigin: "-6rem 0" }}
+                  animate={{ rotate: -360 }}
+                  transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                />
+              </>
+            )}
+          </motion.div>
+        </motion.div>
       </div>
 
       {/* Scroll cue */}
